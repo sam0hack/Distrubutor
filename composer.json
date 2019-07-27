@@ -1,0 +1,37 @@
+{
+    "name": "sam0hack/distributor",
+    "description": "This is a 6 layers referral income/points destributor system",
+    "type": "project, library",
+    "authors": [
+        {
+            "name": "sam",
+            "email": "sam.nyx@live.com"
+        }
+    ],
+    "require": {
+        "erusev/parsedown": "^1.7",
+        "php": "^7.0",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^3.7",
+        "mockery/mockery": "^1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "sam0hack\\Distributor\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "sam0hack\\Distributor\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "sam0hack\\Distributor\\DistributorBaseServiceProvider"
+            ]
+        }
+    }
+}
