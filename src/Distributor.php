@@ -98,6 +98,35 @@ class Distributor extends Model
 
     }
 
+
+    public static function getRandomGenZeroCode()
+    {
+        try {
+            $r = rand(1, 6);
+            $code = DistributorCode::where('user_id', $r)->first();
+            return $code->referral_code;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    /**
+     * get User code
+     * @param $user_id
+     * @return \Exception
+     */
+    public static function getCode($user_id)
+    {
+
+        try {
+            $code = DistributorCode::where('user_id', $user_id)->first();
+            return $code->referral_code;
+        } catch (\Exception $e) {
+            return $e;
+        }
+
+    }
+
     public function getCodeUser()
     {
         $this->hasOne('Src\DistributorCode', 'referral_code', 'code');
