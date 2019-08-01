@@ -12,7 +12,7 @@ class InitialTest extends Tests\TestCase
 
     public function test_test(){
 
-        $level = DistributorLevel::levelMaker(60, 'Qa7styAsRA');
-        dd($level);
+        //DistributorLevel::levelMaker(60, 'Qa7styAsRA');
+
     }
 }
