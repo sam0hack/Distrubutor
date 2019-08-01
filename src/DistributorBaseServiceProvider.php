@@ -5,6 +5,7 @@ namespace sam0hack\Distributor;
 
 
 use Illuminate\Support\ServiceProvider;
+use sam0hack\Distributor\Console\ProcessCommand;
 
 class DistributorBaseServiceProvider extends ServiceProvider
 {
@@ -18,6 +19,7 @@ class DistributorBaseServiceProvider extends ServiceProvider
     public function register()
     {
         $this->commands([Console\ProcessCommand::class]);
+        $this->commands([Console\SettingCommand::class]);
 
     }
 

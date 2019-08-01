@@ -2,9 +2,9 @@
 
 use sam0hack\Distributor\DistributorCode;
 
-$factory->define(DistributorCode::class, function (Faker\Generator $faker) {
+$factory->define(DistributorCode::class, function ($user_id,$referral_code) {
     return [
-        'user_id' => 1,
-        'referral_code' => 'simple_code1',
+        'user_id' => $user_id,
+        'referral_code' => $referral_code,
     ];
 });

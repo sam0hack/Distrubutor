@@ -6,6 +6,7 @@ namespace sam0hack\Distributor\Console;
 
 use Illuminate\Console\Command;
 use sam0hack\Distributor\Distributor;
+use sam0hack\Distributor\DistributorLevel;
 use sam0hack\Distributor\DistributorCode;
 use sam0hack\Distributor\DistributorGenerationZeroUser;
 
@@ -13,7 +14,7 @@ class ProcessCommand extends Command
 {
 
     protected $signature = 'distributor:generation-zero';
-    protected $description = 'This will create Generation zero users. These are the highest level users So there there will no referral above them';
+    protected $description = 'This will create Generation zero users. These are the highest level users. (REQUIRED) ';
 
     public function handle()
     {
@@ -68,26 +69,38 @@ class ProcessCommand extends Command
         $users = explode(",", $input);
         $success = [];
         $errors = [];
+
+
         foreach ($users as $user) {
             //Validate
 
-            $user = trim($user);
+            $is_exits = Distributor::checkIfUserLevelExists($user);
+            if ($is_exits === false) {
+                $user = trim($user);
 
-            if (!is_int((int)$user) OR $user == 0) {
-                array_push($errors, ['status' => 'error', 'data' => "User id ($user) should be an integer"]);
-            } else {
-                //Insert into Generation Zero users
-                DistributorGenerationZeroUser::addGenerationZeroUser($user);
-                array_push($success, ['status' => 'ok', 'data' => "User id ($user) has been successfully added"]);
+                if (!is_int((int)$user) OR $user == 0) {
+                    array_push($errors, ['status' => 'error', 'data' => "User id ($user) should be an integer"]);
+                } else {
+                    //Insert into Generation Zero users
+                    DistributorGenerationZeroUser::addGenerationZeroUser($user);
+                    array_push($success, ['status' => 'ok', 'data' => "User id ($user) has been successfully added"]);
 
+                }
             }
         }
 
         //Add These users in Distributor Table
         $first_user = DistributorGenerationZeroUser::orderBy('id', 'ASC')->first();
         $counts = DistributorGenerationZeroUser::count();
-        $code = DistributorCode::where('user_id', $first_user->user_id)->first();
-        Distributor::create(['user_id' => $first_user->user_id, 'code' => $code->referral_code]);
+
+
+        $is_exits = Distributor::checkIfUserLevelExists($user);
+        if ($is_exits === false) {
+
+            $code = DistributorCode::where('user_id', $first_user->user_id)->first();
+            Distributor::create(['user_id' => $first_user->user_id, 'code' => $code->referral_code]);
+        }
+
         for ($i = 1; $i < $counts; $i++) {
             //Get Prevoius user code
             if ($i == 1) {
@@ -103,10 +116,12 @@ class ProcessCommand extends Command
 
             //Add to Distributors Table
             $gen_zero_user = DistributorGenerationZeroUser::skip($i)->take(1)->first();
-            Distributor::create(['user_id' => $gen_zero_user->user_id, 'code' => $code->referral_code]);
-
-            Distributor::levelMaker($gen_zero_user->user_id, $code->referral_code);
-
+            $is_exits = Distributor::checkIfUserLevelExists($gen_zero_user->user_id);
+            if ($is_exits === false) {
+                Distributor::create(['user_id' => $gen_zero_user->user_id, 'code' => $code->referral_code]);
+                //Make levels for inital users
+                DistributorLevel::levelMaker($gen_zero_user->user_id, $code->referral_code);
+            }
         }
 
         return ['errors' => $errors, 'success' => $success];

@@ -5,11 +5,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class DistributorAmount extends Migration
+class DistributorTransaction extends Migration
 {
     public function up()
     {
-        Schema::create('distributor_amounts', function (Blueprint $table) {
+        Schema::create('distributor_transactions', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('level_id')->comment('From distributor_levels Table');
             $table->double('total_amount')->comment('Total Amount spend by the user on the product');
@@ -29,6 +29,6 @@ class DistributorAmount extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('distributor_amounts');
+        Schema::dropIfExists('distributor_transactions');
     }
 }

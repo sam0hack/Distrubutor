@@ -2,9 +2,9 @@
 
 use sam0hack\Distributor\Distributor;
 
-$factory->define(Distributor::class, function () {
+$factory->define(Distributor::class, function ($user_id,$code) {
     return [
-        'user_id' => 2,
-        'code' => 'simple_code1',
+        'user_id' => $user_id,
+        'code' => $code,
     ];
 });

@@ -4,44 +4,79 @@
 namespace sam0hack\Distributor\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use sam0hack\Distributor\DistributorAmount;
 use sam0hack\Distributor\DistributorCode;
 use sam0hack\Distributor\Distributor;
+use sam0hack\Distributor\DistributorGenerationZeroUser;
 use sam0hack\Distributor\DistributorLevel;
+use sam0hack\Distributor\DistributorSetting;
+use sam0hack\Distributor\DistributorTransaction;
 
 class DistTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testCreateDistributor()
-    {
-        factory(DistributorCode::class)->create();
-        factory(Distributor::class)->create();
-        factory(DistributorLevel::class)->create();
-        factory(DistributorAmount::class)->create();
-        $this->assertCount(1, DistributorCode::all());
-        $this->assertCount(1, Distributor::all());
-        $this->assertCount(1, DistributorLevel::all());
-        $this->assertCount(1, DistributorAmount::all());
-
-    }
-
-    public function testMultipleDistributors()
+    public function testSimpleCreation()
     {
 
-        for ($i = 3; $i < 100; $i++) {
-            $d = DistributorCode::createUserCode($i);
 
-            if ($d != false) {
+        for ($i=1;$i<=6;$i++) {
+            $code = str_random(10);
 
-            } else {
-                $this->assertTrue(false);
-            }
+            factory(DistributorGenerationZeroUser::class)->create([
+                'user_id' => $i
+            ]);
 
-            $c = Distributor::add_distributor($i, 'simple_code1');
-            $this->assertTrue(true);
-
+            factory(Distributor::class)->create([
+                'user_id' => $i,
+                'code'=>$code
+            ]);
+            factory(DistributorCode::class)->create(['user_id'=>$i,'referral_code'=>$code]);
         }
+
+        factory(DistributorLevel::class)->create();
+        $this->assertCount(6, DistributorCode::all());
+        $this->assertCount(6, Distributor::all());
+        $this->assertCount(1, DistributorLevel::all());
+
+        DistributorSetting::setLimit(10);
+        $limit = DistributorSetting::getLimit();
+        $limit = (int)$limit;
+
+        $this->assertEquals(10, $limit);
+
+        DistributorSetting::setDistributionPercentage(25);
+        $percentage = DistributorSetting::getPercantage();
+        $percentage = (int)$percentage;
+        $this->assertEquals(25, $percentage);
+
+
+        $r = DistributorGenerationZeroUser::checkIfSixGenZeroUsersExists();
+
+        $this->assertTrue($r);
+
+        //Get a code from codes table the
+        $genZeroUser = DistributorGenerationZeroUser::latest()->first();
+
+
+        $code = DistributorCode::where('user_id',$genZeroUser->user_id)->first();
+
+        $code = $code->referral_code;
+
+        $return = Distributor::add_distributor(60, $code);
+
+        $this->assertTrue($return);
+
+        $level = DistributorLevel::levelMaker(60, $code);
+
+
+        $this->assertTrue($level);
+        $return = DistributorTransaction::distributeAmount(60,1);
+
+        $this->assertTrue($return);
+
     }
+
+
+
 
 }

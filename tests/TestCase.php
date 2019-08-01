@@ -34,8 +34,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $app['config']->set('database.default','testdb');
         $app['config']->set('database.connections.testdb',[
             'driver'=>'sqlite',
-            'database'=>'testdb'
-            //'database'=>':memory:' #In memory
+            //'database'=>'testdb'
+            'database'=>':memory:' #In memory
         ]);
 
     }
