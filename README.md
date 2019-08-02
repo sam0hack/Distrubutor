@@ -48,22 +48,58 @@ _Recommended if you want to make changes in the plugin_
  
 **Usage** 
 
-To get Random Generation Zero Referral Code
+**To get Random Generation Zero Referral Code**
+
 `Distributor::getRandomGenZeroCode();`
 
-To add new in the Distributor system
+**To add new in the Distributor system**
 
 `Distributor::add_distributor(new_user_id,'referral_code');`
 This will create 6 level layer and a wallet for this new_user_id
 
-Make Transaction
+**Make Transaction**
 
 `DistributorTransaction::distributeAmount(user_id,amount);`
+
  This will distribute the amount into 6 upper levels of this user_id
  
- Get User code
- 
+** Get User code
+** 
  `Distributor::getCode(user_id);`
+ 
+
+###Wallet
+ 
+ **GET Methods**
+ 
+ **Get Total Withdrawal of the user**
+
+ `DistributorWallet::GetTotalWithdrawal('user_id');`
+
+ **Get Total Earnings of the user**
+ 
+`DistributorWallet::GetTotalEarning('user_id');`
+
+ **Get Total Balance of the user**
+
+`DistributorWallet::GetBalance('user_id');`
+ 
+ 
+ **Set Methods**
+     
+ **Set Withdrawal Amount**
+`DistributorWallet::SetTotalwithdrawal(user_id,Withdrawal_amount);`
+
+ 
+ **Set Balance**
+ 
+ `DistributorWallet::SetBalance(user_id,$amount);`
+ 
+ **Set Earnings**
+ 
+ `DistributorWallet::SetTotalEarnings(user_id,$amount);`
+ 
+ 
  
 ### Database
 

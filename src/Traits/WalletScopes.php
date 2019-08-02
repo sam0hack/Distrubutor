@@ -57,10 +57,12 @@ trait WalletScopes
         }
     }
 
+
     /**
      * @param $query
      * @param $user_id
      * @param $value
+     * @return int
      */
     public function scopeSetTotalEarnings($query, $user_id, $value)
     {
@@ -75,10 +77,12 @@ trait WalletScopes
         }
     }
 
+
     /**
      * @param $query
      * @param $user_id
      * @param $value
+     * @return int
      */
     public function scopeSetTotalwithdrawal($query, $user_id, $value)
     {
@@ -92,10 +96,12 @@ trait WalletScopes
         }
     }
 
+
     /**
      * @param $query
      * @param $user_id
      * @param $value
+     * @return int
      */
     public function scopeSetBalance($query, $user_id, $value)
     {
