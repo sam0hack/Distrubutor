@@ -3,9 +3,9 @@
 
 namespace sam0hack\Distributor;
 
-use Illuminate\Support\Str;
-
+use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class DistributorCode extends Model
 {
@@ -28,7 +28,7 @@ class DistributorCode extends Model
                 $distributor = DistributorCode::Create(['user_id' => $user_id, 'referral_code' => $code]);
                 return $distributor;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
         return false;

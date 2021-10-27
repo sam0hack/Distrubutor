@@ -4,6 +4,7 @@
 namespace sam0hack\Distributor;
 
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 
 class DistributorGenerationZeroUser extends Model
@@ -21,7 +22,7 @@ class DistributorGenerationZeroUser extends Model
             } else {
                 //Skip
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $e;
         }
     }
@@ -40,11 +41,11 @@ class DistributorGenerationZeroUser extends Model
             if (empty($count)) {
                 return false;
             }
-            if ($count < 6) {
+            if ($count < 5) {
                 return false;
             }
             return true;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return false;
         }
 

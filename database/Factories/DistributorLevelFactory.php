@@ -1,8 +1,8 @@
 <?php
 
-use sam0hack\Distributor\DistributorLevel;
+    use sam0hack\Distributor\DistributorLevel;
 
-$factory->define(DistributorLevel::class, function () {
+    $factory->define(DistributorLevel::class, function () {
     return [
         'distributed_by' => 200,
         'level_1' => 1,

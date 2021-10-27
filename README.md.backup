@@ -29,7 +29,7 @@ _Recommended if you want to make changes in the plugin_
      
  Make sure you have Distributor plugin in same folder
  
- Run  `composer require sam0hack/Distributor`
+ Run  `composer require "sam0hack/Distributor`
  
  **Installation**
  

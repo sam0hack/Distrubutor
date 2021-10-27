@@ -2,6 +2,8 @@
 
 namespace sam0hack\Distributor\Traits;
 
+use Exception;
+
 /**
  * Trait WalletScopes
  * @package sam0hack\Distributor\Traits
@@ -21,7 +23,7 @@ trait WalletScopes
         try {
             $q = $query->select('total_withdrawal')->where('user_id', $user_id)->first();
             return $q->total_withdrawal;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }
@@ -29,6 +31,7 @@ trait WalletScopes
     /**
      * GetBalance
      * @param $user_id
+     *  @param $query
      * @return mixed
      */
     public function scopeGetBalance($query, $user_id)
@@ -36,7 +39,7 @@ trait WalletScopes
         try {
             $q = $query->select('current_balance')->where('user_id', $user_id)->first();
             return $q->current_balance;
-        }catch (\Exception $e){
+        }catch (Exception $e){
             return 0;
         }
     }
@@ -44,6 +47,7 @@ trait WalletScopes
     /**
      * GetTotalEarning
      * @param $user_id
+     *  @param $query
      * @return mixed
      */
     public function scopeGetTotalEarning($query, $user_id)
@@ -52,7 +56,7 @@ trait WalletScopes
 
             $q = $query->select('total_earned')->where('user_id', $user_id)->first();
             return $q->total_earned;
-        }catch (\Exception $e){
+        }catch (Exception $e){
             return 0;
         }
     }
@@ -69,10 +73,11 @@ trait WalletScopes
 
         try {
             $q = $query->where('user_id', $user_id)->first();
-            $q->total_earned = round($value,2);
+            $q->total_earned =  ( $q->total_earned + round($value,2));
+
             $q->save();
             return $q;
-        }catch (\Exception $e){
+        }catch (Exception $e){
             return 0;
         }
     }
@@ -83,15 +88,20 @@ trait WalletScopes
      * @param $user_id
      * @param $value
      * @return int
+     *
      */
     public function scopeSetTotalwithdrawal($query, $user_id, $value)
     {
         try {
             $q = $query->where('user_id', $user_id)->first();
-            $q->total_withdrawal = round($value,2);
+            $q->total_withdrawal = ($q->total_withdrawal + round($value,2));
+            // Update Current Balance >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            $total_earned=$q->total_earned;
+            $current_balance=$total_earned-$value;
+            $q->current_balance=$current_balance;
             $q->save();
             return $q;
-        }catch (\Exception $e){
+        }catch (Exception $e){
             return 0;
         }
     }
@@ -107,11 +117,26 @@ trait WalletScopes
     {
         try{
         $q = $query->where('user_id', $user_id)->first();
-        $q->current_balance = round($value,2);
+        $q->current_balance = ( $q->current_balance +  round($value,2));
         $q->save();
         return $q;
-        }catch (\Exception $e){
+        }catch (Exception $e){
             return 0;
         }
     }
+
+
+    public function scopeAddEarning($query,$user_id,$value){
+
+        try{
+
+            $this->scopeSetBalance($query,$user_id,$value);
+            $this->scopeSetTotalEarnings($query,$user_id,$value);
+
+        }catch (Exeption $e){
+            return 0;
+        }
+
+    }
+
 }

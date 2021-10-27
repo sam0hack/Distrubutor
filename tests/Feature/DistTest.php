@@ -4,8 +4,8 @@
 namespace sam0hack\Distributor\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use sam0hack\Distributor\DistributorCode;
 use sam0hack\Distributor\Distributor;
+use sam0hack\Distributor\DistributorCode;
 use sam0hack\Distributor\DistributorGenerationZeroUser;
 use sam0hack\Distributor\DistributorLevel;
 use sam0hack\Distributor\DistributorSetting;

@@ -1,7 +1,7 @@
 {
   "name": "sam0hack/distributor",
   "description": "This is a 6 layers referral income/points distributor system.",
-  "type": "Project",
+  "type": "project",
   "authors": [
     {
       "name": "sam",
@@ -14,7 +14,7 @@
   ],
   "require": {
     "erusev/parsedown": "^1.7",
-    "php": "^7.0",
+    "php": "^7.4",
     "ext-json": "*"
   },
   "require-dev": {

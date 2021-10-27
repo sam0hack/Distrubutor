@@ -6,9 +6,9 @@ namespace sam0hack\Distributor\Console;
 
 use Illuminate\Console\Command;
 use sam0hack\Distributor\Distributor;
-use sam0hack\Distributor\DistributorLevel;
 use sam0hack\Distributor\DistributorCode;
 use sam0hack\Distributor\DistributorGenerationZeroUser;
+use sam0hack\Distributor\DistributorLevel;
 
 class ProcessCommand extends Command
 {

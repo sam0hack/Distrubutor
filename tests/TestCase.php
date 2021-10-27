@@ -4,6 +4,7 @@
 namespace sam0hack\Distributor\Tests;
 
 
+use Illuminate\Foundation\Application;
 use sam0hack\Distributor\DistributorBaseServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -16,7 +17,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
 
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      * @return array
      */
     protected function getPackageProviders($app)
@@ -27,7 +28,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     }
 
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      */
     protected function getEnvironmentSetUp($app)
     {

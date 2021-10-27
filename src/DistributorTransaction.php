@@ -1,161 +1,197 @@
 <?php
 
 
-namespace sam0hack\Distributor;
+    namespace sam0hack\Distributor;
 
-use sam0hack\Distributor\DistributorWallet;
-use Illuminate\Database\Eloquent\Model;
+    use App\Models\Setting;
+    use Exception;
+    use Illuminate\Database\Eloquent\Model;
+    use App\Repositories\Packages\PackageRepositoryInterface;
 
-
-class DistributorTransaction extends Model
-{
-    protected $guarded = [];
-
-
-    /**
-     * @param $distributor_id
-     * @param $amount
-     * @return bool
-     */
-    public static function distributeAmount($distributor_id, $amount)
+    class DistributorTransaction extends Model
     {
-        try {
-            //get this user's 6 levels
-            $distributor = DistributorLevel::where('distributed_by', $distributor_id)->first();
+        protected $guarded = [];
 
-            if ($distributor === null) {
-                return $distributor;
+
+        /**
+         * @param $dis_convenience_fees
+         * @return bool
+         */
+        public static function ApplyGst($dis_convenience_fees)
+        {
+            try {
+                $gst = Setting::getGST();
+                $update_gst_dist = round(($dis_convenience_fees * $gst) / 100, 2);
+                return $dis_convenience_fees - $update_gst_dist;
+            } catch (Exception $e) {
+                return false;
             }
-
-            $level_one = $distributor->level_1;
-            $level_two = $distributor->level_2;
-            $level_three = $distributor->level_3;
-            $level_four = $distributor->level_4;
-            $level_five = $distributor->level_5;
-            $level_six = $distributor->level_6;
-
-            //Get Percantage of the Ammount
-            $percentage = DistributorSetting::getPercantage();
-
-            $percentage_dist = ($percentage / 100);
-
-            //Float val
-            $dist_amount = ($percentage_dist * $amount);
-
-            //$dist_amount = ($percentage * $amount);
-
-            //Devide this amount into 6 layers
-            $per_user_amount = ($dist_amount / 6);
-
-            $per_user_amount = round($per_user_amount, 2);
-            //Create Transaction
-            $transaction = DistributorTransaction::create(['level_id' => $distributor->id,
-                'total_amount' => $amount,
-                'dist_percent' => $percentage,
-                'dist_amount' => $dist_amount,
-                'per_user_amount' => $per_user_amount]);
-
-            //Add into Earning
-            DistributorEarningFromUser::create(['user_id' => $level_one, 'transaction_id' => $transaction->id,
-                'earned' => $per_user_amount]);
-            DistributorEarningFromUser::create(['user_id' => $level_two, 'transaction_id' => $transaction->id,
-                'earned' => $per_user_amount]);
-            DistributorEarningFromUser::create(['user_id' => $level_three, 'transaction_id' => $transaction->id,
-                'earned' => $per_user_amount]);
-            DistributorEarningFromUser::create(['user_id' => $level_four, 'transaction_id' => $transaction->id,
-                'earned' => $per_user_amount]);
-            DistributorEarningFromUser::create(['user_id' => $level_five, 'transaction_id' => $transaction->id,
-                'earned' => $per_user_amount]);
-            DistributorEarningFromUser::create(['user_id' => $level_six, 'transaction_id' => $transaction->id,
-                'earned' => $per_user_amount]);
-
-            //Update Account Balance
-
-            //Check if this user have a wallet
-            //Create if this user doesn't have a wallet
-            DistributorWallet::createWalletIfNotExists($level_one);
-            DistributorWallet::createWalletIfNotExists($level_two);
-            DistributorWallet::createWalletIfNotExists($level_three);
-            DistributorWallet::createWalletIfNotExists($level_four);
-            DistributorWallet::createWalletIfNotExists($level_five);
-            DistributorWallet::createWalletIfNotExists($level_six);
-
-            //Level One
-            $level_one_earnings = DistributorWallet::GetTotalEarning($level_one);
-            $level_one_balance = DistributorWallet::GetBalance($level_one);
-
-            //Update Total Earnings
-            $earn = ((float)$level_one_earnings + (float)$per_user_amount);
-            DistributorWallet::SetTotalEarnings($level_one, $earn);
-            //Update current balance
-            $balance = ((float)$level_one_balance + (float)$per_user_amount);
-            DistributorWallet::SetBalance($level_one, $balance);
-
-
-            //Level Two
-            $level_two_earnings = DistributorWallet::GetTotalEarning($level_two);
-            $level_two_balance = DistributorWallet::GetBalance($level_two);
-
-            //Update Total Earnings
-            $earn = ((float)$level_two_earnings + (float)$per_user_amount);
-            DistributorWallet::SetTotalEarnings($level_two, $earn);
-            //Update current balance
-            $balance = ((float)$level_two_balance + (float)$per_user_amount);
-            DistributorWallet::SetBalance($level_two, $balance);
-
-
-            //Level Three
-            $level_three_earnings = DistributorWallet::GetTotalEarning($level_three);
-            $level_three_balance = DistributorWallet::GetBalance($level_three);
-
-            //Update Total Earnings
-            $earn = ((float)$level_three_earnings + (float)$per_user_amount);
-            DistributorWallet::SetTotalEarnings($level_three, $earn);
-            //Update current balance
-            $balance = ((float)$level_three_balance + (float)$per_user_amount);
-            DistributorWallet::SetBalance($level_three, $balance);
-
-
-            //Level Four
-            $level_four_earnings = DistributorWallet::GetTotalEarning($level_four);
-            $level_four_balance = DistributorWallet::GetBalance($level_four);
-
-            //Update Total Earnings
-            $earn = ((float)$level_four_earnings + (float)$per_user_amount);
-            DistributorWallet::SetTotalEarnings($level_four, $earn);
-            //Update current balance
-            $balance = ((float)$level_four_balance + (float)$per_user_amount);
-            DistributorWallet::SetBalance($level_four, $balance);
-
-
-            //Level Five
-            $level_five_earnings = DistributorWallet::GetTotalEarning($level_five);
-            $level_five_balance = DistributorWallet::GetBalance($level_five);
-
-            //Update Total Earnings
-            $earn = ((float)$level_five_earnings + (float)$per_user_amount);
-            DistributorWallet::SetTotalEarnings($level_five, $earn);
-            //Update current balance
-            $balance = ((float)$level_five_balance + (float)$per_user_amount);
-            DistributorWallet::SetBalance($level_five, $balance);
-
-
-            //Level Six
-            $level_six_earnings = DistributorWallet::GetTotalEarning($level_six);
-            $level_six_balance = DistributorWallet::GetBalance($level_six);
-
-            //Update Total Earnings
-            $earn = ((float)$level_six_earnings + (float)$per_user_amount);
-            DistributorWallet::SetTotalEarnings($level_six, $earn);
-            //Update current balance
-            $balance = ((float)$level_six_balance + (float)$per_user_amount);
-            DistributorWallet::SetBalance($level_six, $balance);
-
-
-            return true;
-        } catch (\Exception $e) {
-            return false;
         }
-    }
 
-}
+
+        /**
+         * @param $distributor_id
+         * @param $amount
+         * @param string $package
+         * @return bool
+         */
+        public static function distributeAmount($distributor_id, $amount, $package = '')
+        {
+            try {
+
+
+                //get this user's 5 levels
+                $distributor = DistributorLevel::where('distributed_by', $distributor_id)->first();
+
+
+                if ($distributor === null) {
+                    return null;
+                }
+
+                $level_one = $distributor->level_1;
+                $level_two = $distributor->level_2;
+                $level_three = $distributor->level_3;
+                $level_four = $distributor->level_4;
+                $level_five = $distributor->level_5;
+                // $level_six = $distributor->level_6;
+
+                //Get Percantage of the Ammount
+                $percentage = DistributorSetting::getPercantage();
+
+
+                $percentage_dist = ($percentage / 100);
+
+                //Float val
+                $dist_amount = round(($percentage_dist * $amount), 2);
+
+                //$dist_amount = ($percentage * $amount);
+
+                //Divide this amount into 6 layers
+                $per_user_amount = ($dist_amount / 6);
+
+                //$per_user_amount = round($per_user_amount, 2);
+                //$per_user_amount = $amount;
+                $dist_amount = $amount;
+
+                //Create Transaction
+                $transaction = DistributorTransaction::create(['level_id' => $distributor->id,
+                    'total_amount' => $amount,
+                    'dist_percent' => $percentage,
+                    'dist_amount' => $dist_amount,
+                    'per_user_amount' => $per_user_amount,
+                    'transaction_by' => $distributor_id]);
+
+                // If user not subscribed the amount goes to admin
+                $level_one = $package->IsSubscribed($level_one) != false ? $level_one : 1;
+                $level_two = $package->IsSubscribed($level_two) != false ? $level_two : 1;
+                $level_three = $package->IsSubscribed($level_three) != false ? $level_three : 1;
+                $level_four = $package->IsSubscribed($level_four) != false ? $level_four : 1;
+                $level_five = $package->IsSubscribed($level_five) != false ? $level_five : 1;
+
+
+
+                //Add into Earning"
+              $r =  DistributorEarningFromUser::create(['user_id' => $distributor_id, 'transaction_id' => $transaction->id,
+                    'earned' => $per_user_amount]);
+                DistributorEarningFromUser::create(['user_id' => $level_one, 'transaction_id' => $transaction->id,
+                    'earned' => $per_user_amount]);
+                DistributorEarningFromUser::create(['user_id' => $level_two, 'transaction_id' => $transaction->id,
+                    'earned' => $per_user_amount]);
+                DistributorEarningFromUser::create(['user_id' => $level_three, 'transaction_id' => $transaction->id,
+                    'earned' => $per_user_amount]);
+                DistributorEarningFromUser::create(['user_id' => $level_four, 'transaction_id' => $transaction->id,
+                    'earned' => $per_user_amount]);
+                DistributorEarningFromUser::create(['user_id' => $level_five, 'transaction_id' => $transaction->id,
+                    'earned' => $per_user_amount]);
+//            DistributorEarningFromUser::create(['user_id' => $level_six, 'transaction_id' => $transaction->id,
+//                'earned' => $per_user_amount]);
+
+                //Update Account Balance
+                //Check if this user have a wallet
+                //Create if this user doesn't have a wallet
+                DistributorWallet::createWalletIfNotExists($distributor_id);
+                DistributorWallet::createWalletIfNotExists($level_one);
+                DistributorWallet::createWalletIfNotExists($level_two);
+                DistributorWallet::createWalletIfNotExists($level_three);
+                DistributorWallet::createWalletIfNotExists($level_four);
+                DistributorWallet::createWalletIfNotExists($level_five);
+                //DistributorWallet::createWalletIfNotExists($level_six);
+
+                //Level One
+                $level_one_earnings = DistributorWallet::GetTotalEarning($level_one);
+                $level_one_balance = DistributorWallet::GetBalance($level_one);
+
+                //Update Total Earnings
+                $earn = ((float)$level_one_earnings + (float)$per_user_amount);
+                DistributorWallet::SetTotalEarnings($level_one, $earn);
+                //Update current balance
+                $balance = ((float)$level_one_balance + (float)$per_user_amount);
+                DistributorWallet::SetBalance($level_one, $balance);
+
+
+                //Level Two
+                $level_two_earnings = DistributorWallet::GetTotalEarning($level_two);
+                $level_two_balance = DistributorWallet::GetBalance($level_two);
+
+                //Update Total Earnings
+                $earn = ((float)$level_two_earnings + (float)$per_user_amount);
+                DistributorWallet::SetTotalEarnings($level_two, $earn);
+                //Update current balance
+                $balance = ((float)$level_two_balance + (float)$per_user_amount);
+                DistributorWallet::SetBalance($level_two, $balance);
+
+
+                //Level Three
+                $level_three_earnings = DistributorWallet::GetTotalEarning($level_three);
+                $level_three_balance = DistributorWallet::GetBalance($level_three);
+
+                //Update Total Earnings
+                $earn = ((float)$level_three_earnings + (float)$per_user_amount);
+                DistributorWallet::SetTotalEarnings($level_three, $earn);
+                //Update current balance
+                $balance = ((float)$level_three_balance + (float)$per_user_amount);
+                DistributorWallet::SetBalance($level_three, $balance);
+
+
+                //Level Four
+                $level_four_earnings = DistributorWallet::GetTotalEarning($level_four);
+                $level_four_balance = DistributorWallet::GetBalance($level_four);
+
+                //Update Total Earnings
+                $earn = ((float)$level_four_earnings + (float)$per_user_amount);
+                DistributorWallet::SetTotalEarnings($level_four, $earn);
+                //Update current balance
+                $balance = ((float)$level_four_balance + (float)$per_user_amount);
+                DistributorWallet::SetBalance($level_four, $balance);
+
+
+                //Level Five
+                $level_five_earnings = DistributorWallet::GetTotalEarning($level_five);
+                $level_five_balance = DistributorWallet::GetBalance($level_five);
+
+                //Update Total Earnings
+                $earn = ((float)$level_five_earnings + (float)$per_user_amount);
+                DistributorWallet::SetTotalEarnings($level_five, $earn);
+                //Update current balance
+                $balance = ((float)$level_five_balance + (float)$per_user_amount);
+                DistributorWallet::SetBalance($level_five, $balance);
+
+               return true;
+
+                //Level Six
+//            $level_six_earnings = DistributorWallet::GetTotalEarning($level_six);
+//            $level_six_balance = DistributorWallet::GetBalance($level_six);
+
+                //Update Total Earnings
+//            $earn = ((float)$level_six_earnings + (float)$per_user_amount);
+//            DistributorWallet::SetTotalEarnings($level_six, $earn);
+//            //Update current balance
+//            $balance = ((float)$level_six_balance + (float)$per_user_amount);
+//            DistributorWallet::SetBalance($level_six, $balance);
+
+            } catch (Exception  $e) {
+                dd($e);
+            }
+        }
+
+    }

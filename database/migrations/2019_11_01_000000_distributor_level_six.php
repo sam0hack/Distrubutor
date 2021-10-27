@@ -5,14 +5,14 @@
     use Illuminate\Database\Schema\Blueprint;
     use Illuminate\Support\Facades\Schema;
 
-    class Distributor extends Migration
+    class DistributorLevelSix extends Migration
 {
     public function up()
     {
-        Schema::create('distributors', function (Blueprint $table) {
+        Schema::create('distributor_level_six', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->comment('User id from users Table');
-            $table->string('code')->index()->comment('Referral code. All referral codes are in the distributor_codes Tables');
+            $table->integer('user_id')->comment('under user id');
+            $table->integer('level_user_id')->comment('level six Referred users');
             $table->timestamps();
             $table->index('created_at');
             $table->index('updated_at');
@@ -26,6 +26,6 @@
      */
     public function down()
     {
-        Schema::dropIfExists('distributors');
+        Schema::dropIfExists('distributor_level_six');
     }
 }

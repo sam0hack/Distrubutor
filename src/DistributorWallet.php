@@ -3,7 +3,7 @@
 
 namespace sam0hack\Distributor;
 
-use sam0hack\Distributor\DistributorCode;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use sam0hack\Distributor\Traits\WalletScopes;
 
@@ -25,7 +25,7 @@ class DistributorWallet extends Model
                 DistributorWallet::create(['user_id' => $user_id, 'total_earned' => 0, 'total_withdrawal' => 0, 'current_balance' => 0]);
             }
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
 

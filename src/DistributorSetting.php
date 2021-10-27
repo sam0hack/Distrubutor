@@ -4,6 +4,7 @@
 namespace sam0hack\Distributor;
 
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 
 
@@ -32,7 +33,7 @@ class DistributorSetting extends Model
                 return true;
             }
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
@@ -58,7 +59,7 @@ class DistributorSetting extends Model
                 return true;
             }
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
 
@@ -74,7 +75,7 @@ class DistributorSetting extends Model
                 return false;
             }
             return $percentage->value;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
@@ -91,7 +92,7 @@ class DistributorSetting extends Model
                 return false;
             }
             return $limit->value;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
